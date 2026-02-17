@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: brainbolt_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: brainbolt
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: brainbolt_redis
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: ./backend
+    container_name: brainbolt_backend
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    build: ./frontend
+    container_name: brainbolt_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
